@@ -9,4 +9,6 @@ test("TC_Login_01: Verify that user can login successfully with valid account", 
   await page.goto("/");
 
   await homePage.getTopBarComponent().enterResearchInput(info);
+
+  await homePage.getTopBarComponent().pressEnterButtonToSearch();
 });
