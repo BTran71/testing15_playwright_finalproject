@@ -14,14 +14,10 @@ export class RegisterPage extends CommonPage {
   constructor(page: Page) {
     super(page);
     this.accountInput = page
-      .locator("form")
-      .filter({
-        hasText: "ĐĂNG KÝGP01GP02GP03GP04GP05GP06GP07GP08GP09GP010Đăng ký",
-      })
+      .locator(".sign-up-container")
       .getByPlaceholder("Tài khoản");
     this.passwordInput = page
-      .locator("form")
-      .filter({ hasText: "ĐĂNG KÝTài khoản quá 16 kí tự" })
+      .locator(".sign-up-container")
       .getByPlaceholder("Mật khẩu");
     this.phonenumberInput = page.getByRole("textbox", {
       name: "Số điện thoại",
@@ -29,11 +25,8 @@ export class RegisterPage extends CommonPage {
     this.emailInput = page.getByRole("textbox", { name: "Email" });
     this.fullnameInput = page.getByRole("textbox", { name: "Họ tên" });
     this.registerButton = page
-      .locator("form")
-      .filter({
-        hasText: "ĐĂNG KÝGP01GP02GP03GP04GP05GP06GP07GP08GP09GP010Đăng ký",
-      })
-      .getByRole("button");
+      .locator(".sign-up-container")
+      .getByRole("button", { name: "Đăng ký" });
     this.ddlGroupCode = page.getByRole("combobox");
     this.translateToLoginButoon = page.locator("#signIn");
   }
@@ -47,10 +40,6 @@ export class RegisterPage extends CommonPage {
   }
 
   async enterPhoneNumber(phone: string) {
-    if (!/^\d+$/.test(phone)) {
-      throw new Error("Phone number must contain only digits.");
-    }
-
     await this.phonenumberInput.fill(phone);
   }
 

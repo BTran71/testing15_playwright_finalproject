@@ -22,11 +22,12 @@ export class TopBarComponent extends BasePage {
     this.searchInput = page.getByRole("textbox", { name: "Tìm kiếm" });
   }
 
-  async navigateToLoginPage() {
-    // timeOut: number = TimeOutConstants.TIME_OUT_DEFAULT,
-    await this.lnkLogin.click();
-
-    // await this.click(this.lnkLogin, timeOut);
+  async navigateToLoginPage(
+    timeOut: number = TimeOutConstants.TIME_OUT_DEFAULT,
+  ) {
+    // ,,
+    // await this.lnkLogin.click();
+    await this.click(this.lnkLogin, timeOut);
   }
 
   async navigateToBlogPage(
@@ -54,7 +55,7 @@ export class TopBarComponent extends BasePage {
   }
 
   async hoverCategory(timeOut: number = TimeOutConstants.TIME_OUT_DEFAULT) {
-    await this.ddlCategory.hover();
+    await this.hover(this.ddlCategory, timeOut);
   }
 
   async enterResearchInput(info: string) {
