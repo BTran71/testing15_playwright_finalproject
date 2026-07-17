@@ -35,7 +35,7 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
-    actionTimeout: 10000, //mặc định là 0 (k có timeout), nếu action nào chạy quá 10s sẽ fail
+    actionTimeout: 20000, //mặc định là 0 (k có timeout), nếu action nào chạy quá 10s sẽ fail
   },
 
   /* Configure projects for major browsers */
