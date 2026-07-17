@@ -6,7 +6,7 @@ test.describe("Register Page Test", () => {
   let password;
   let fullname;
   let email;
-  const secondDigits = ["5", "7", "8", "9"];
+  const secondDigits = ["3", "5", "7", "8", "9"];
   let phoneNumber =
     "0" +
     secondDigits[Math.floor(Math.random() * secondDigits.length)] +
@@ -750,6 +750,36 @@ test.describe("Register Page Test", () => {
     await registerPage.clickRegisterButton();
 
     const successLbl = page.getByText("Email không hợp lệ");
+    await expect(successLbl).toBeVisible();
+  });
+
+  test("RTC_25: Verify the email textbox when only whitespace is entered", async ({
+    page,
+    loginPage,
+    registerPage,
+  }) => {
+    account = generateAccount(5);
+    password = "Testing15@";
+    fullname = "Testing playwright";
+    email = "          ";
+
+    await loginPage.clickTranslateRegisterButton();
+
+    await registerPage.enterAccountInput(account);
+
+    await registerPage.enterFullnameInput(fullname);
+
+    await registerPage.enterPasswordInput(password);
+
+    await registerPage.enterEmailInput(email);
+
+    await registerPage.enterPhoneNumber(phoneNumber);
+
+    await registerPage.chooseGroupCode();
+
+    await registerPage.clickRegisterButton();
+
+    const successLbl = page.getByText("Email không được để trống");
     await expect(successLbl).toBeVisible();
   });
 });
