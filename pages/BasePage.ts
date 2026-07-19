@@ -41,4 +41,12 @@ export class BasePage {
   ) {
     await locator.press(keyboard, { timeout: timeOut });
   }
+
+  async selectOption(
+    locator: Locator,
+    value: string,
+    timeOut: number = TimeOutConstants.TIME_OUT_DEFAULT,
+  ) {
+    await locator.selectOption(value, { timeout: timeOut });
+  }
 }
