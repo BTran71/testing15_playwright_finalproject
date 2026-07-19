@@ -22,6 +22,12 @@ export class RouteConstants {
   static category(categoryCode: string): string {
     return `/danhmuckhoahoc/${categoryCode}`;
   }
+
+  /**
+   * API backend trả về danh sách khóa học (trang chủ, trang tìm kiếm,
+   * trang danh mục đều gọi endpoint này để đổ dữ liệu card).
+   */
+  static readonly API_COURSE_LIST = "/api/QuanLyKhoaHoc/LayDanhSachKhoaHoc";
 }
 
 /** Mã danh mục (lĩnh vực) hợp lệ trên site, lấy từ menu "DANH MỤC". */
