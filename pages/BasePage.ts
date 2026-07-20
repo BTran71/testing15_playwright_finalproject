@@ -65,6 +65,8 @@ export class BasePage {
     } catch {
       return this.page.url();
     }
+  }
+
   async selectOption(
     locator: Locator,
     value: string,
