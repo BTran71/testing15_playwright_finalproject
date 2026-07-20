@@ -55,7 +55,7 @@ export class RegisterPage extends CommonPage {
     const options = this.ddlGroupCode.locator("option");
     const count = await options.count();
 
-    const randomIndex = Math.floor(Math.random() * count);
+    const randomIndex = Math.floor(Math.random() * (count - 1));
 
     const value = await options.nth(randomIndex).getAttribute("value");
 
@@ -70,12 +70,20 @@ export class RegisterPage extends CommonPage {
     await this.translateToLoginButoon.click();
   }
 
+  async selectGroupCodeDropDown(value: string) {
+    await this.selectOption(this.ddlGroupCode, value);
+    const texts = await this.ddlGroupCode.locator("option").allTextContents();
+
+    console.log(texts);
+  }
+
   async register(
     account: string,
     password: string,
     rePassword: string,
     email: string,
     fullname: string,
+    groupCode: string,
   ) {
     await this.enterAccountInput(account);
     await this.enterFullnameInput(fullname);
@@ -85,5 +93,6 @@ export class RegisterPage extends CommonPage {
     await this.chooseGroupCode();
     await this.clickRegisterButton();
     await this.clickReturnLoginButton();
+    await this.selectGroupCodeDropDown(groupCode);
   }
 }

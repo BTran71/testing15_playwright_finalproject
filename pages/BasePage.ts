@@ -65,5 +65,11 @@ export class BasePage {
     } catch {
       return this.page.url();
     }
+  async selectOption(
+    locator: Locator,
+    value: string,
+    timeOut: number = TimeOutConstants.TIME_OUT_DEFAULT,
+  ) {
+    await locator.selectOption(value, { timeout: timeOut });
   }
 }
