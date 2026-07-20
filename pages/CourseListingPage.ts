@@ -32,24 +32,32 @@ export class CourseListingPage extends CommonPage {
     return this.courseLinks.count();
   }
 
-  /**
-   * Chờ dữ liệu khóa học tải xong trước khi đếm.
-   * Dữ liệu card được gọi qua API SAU domcontentloaded, nên phải chờ tới khi
-   * HOẶC có card đầu tiên hiển thị, HOẶC xuất hiện thông báo "0 kết quả".
-   * Nhờ vậy courseCount() đọc được con số chính xác cho cả trường hợp có và không có kết quả.
-   */
   async waitForResults(timeout = 15000): Promise<void> {
-    await Promise.race([
-      this.courseLinks
-        .first()
-        .waitFor({ state: "visible", timeout })
-        .catch(() => {}),
-      this.page
-        .getByText(/0 k[eế]t qu/i)
-        .first()
-        .waitFor({ state: "visible", timeout })
-        .catch(() => {}),
-    ]);
+    await this.page
+      .waitForResponse(
+        (res) =>
+          res.url().includes("/api/QuanLyKhoaHoc/LayDanhSachKhoaHoc") &&
+          res.ok(),
+        { timeout },
+      )
+      .catch(() => {}); // nếu trang không refetch (đã có sẵn data) thì bỏ qua
+    await this.page
+      .getByText(/Hi[eể]n th[iị]\s*\d+\s*k[eế]t qu/i)
+      .first()
+      .waitFor({ state: "visible", timeout })
+      .catch(() => {});
+    // chờ React render xong danh sách sau khi có data
+    await this.page.waitForTimeout(300);
+  }
+
+  async resultLabelCount(): Promise<number> {
+    const text = await this.page
+      .getByText(/Hi[eể]n th[iị]\s*\d+\s*k[eế]t qu/i)
+      .first()
+      .textContent()
+      .catch(() => null);
+    const match = text?.match(/(\d+)/);
+    return match ? Number(match[1]) : -1;
   }
 
   /** Lấy href của khóa học thứ i (0-based). */
