@@ -42,6 +42,29 @@ export class BasePage {
     await locator.press(keyboard, { timeout: timeOut });
   }
 
+  /**
+   * Chờ 1 response API có URL chứa urlPart. Không lọc theo status code vì
+   * API của site trả status lỗi khi không có dữ liệu nhưng vẫn là tín hiệu
+   * "đã xử lý xong". Quá timeout thì bỏ qua (trang không gọi lại API).
+   */
+  async waitForApiResponse(
+    urlPart: string,
+    timeOut: number = TimeOutConstants.TIME_OUT_API,
+  ): Promise<void> {
+    await this.page
+      .waitForResponse((res) => res.url().includes(urlPart), {
+        timeout: timeOut,
+      })
+      .catch(() => {});
+  }
+
+  /** lấy URL hiện tại của trang và chuyển các ký tự đã bị mã hóa trong URL về dạng dễ đọc. */
+  getDecodedUrl(): string {
+    try {
+      return decodeURIComponent(this.page.url());
+    } catch {
+      return this.page.url();
+    }
   async selectOption(
     locator: Locator,
     value: string,

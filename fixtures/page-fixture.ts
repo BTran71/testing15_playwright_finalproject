@@ -2,11 +2,14 @@ import { test as base } from "@playwright/test";
 import { HomePage } from "../pages/HomePage";
 import { LoginPage } from "../pages/LoginPage";
 import { RegisterPage } from "../pages/RegisterPage";
+import { SearchResultPage } from "../pages/SearchResultPage";
+
 type MyFixture = {
   homePage: HomePage;
   loginPage: LoginPage;
   registerPage: RegisterPage;
   //them cac page khac khi mo rong
+  searchResultPage: SearchResultPage;
 };
 
 export const test = base.extend<MyFixture>({
@@ -31,5 +34,11 @@ export const test = base.extend<MyFixture>({
 
     await use(registerPage);
   },
+
+    searchResultPage: async ({ page }, use) => {
+    const searchResultPage = new SearchResultPage(page);
+    await use(searchResultPage);
+  },
+
 });
 export { expect } from "@playwright/test";
