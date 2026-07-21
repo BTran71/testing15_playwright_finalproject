@@ -32,24 +32,6 @@ export class CourseListingPage extends CommonPage {
     return this.courseLinks.count();
   }
 
-  async waitForResults(timeout = 15000): Promise<void> {
-    await this.page
-      .waitForResponse(
-        (res) =>
-          res.url().includes("/api/QuanLyKhoaHoc/LayDanhSachKhoaHoc") &&
-          res.ok(),
-        { timeout },
-      )
-      .catch(() => {}); // nếu trang không refetch (đã có sẵn data) thì bỏ qua
-    await this.page
-      .getByText(/Hi[eể]n th[iị]\s*\d+\s*k[eế]t qu/i)
-      .first()
-      .waitFor({ state: "visible", timeout })
-      .catch(() => {});
-    // chờ React render xong danh sách sau khi có data
-    await this.page.waitForTimeout(300);
-  }
-
   async resultLabelCount(): Promise<number> {
     const text = await this.page
       .getByText(/Hi[eể]n th[iị]\s*\d+\s*k[eế]t qu/i)

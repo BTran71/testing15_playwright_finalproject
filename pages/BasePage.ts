@@ -1,4 +1,4 @@
-import { Locator, Page } from "@playwright/test";
+import { Locator, Page, Response } from "@playwright/test";
 import { TimeOutConstants } from "../constants/TimeOutConstants";
 
 export class BasePage {
@@ -43,19 +43,19 @@ export class BasePage {
   }
 
   /**
-   * Chờ 1 response API có URL chứa urlPart. Không lọc theo status code vì
-   * API của site trả status lỗi khi không có dữ liệu nhưng vẫn là tín hiệu
-   * "đã xử lý xong". Quá timeout thì bỏ qua (trang không gọi lại API).
+   * Chờ 1 response API có URL chứa urlPart.
    */
-  async waitForApiResponse(
-    urlPart: string,
+  waitForApiResponse(
+    urlParts: string | string[],
     timeOut: number = TimeOutConstants.TIME_OUT_API,
-  ): Promise<void> {
-    await this.page
-      .waitForResponse((res) => res.url().includes(urlPart), {
-        timeout: timeOut,
-      })
-      .catch(() => {});
+  ): Promise<Response | null> {
+    const parts = Array.isArray(urlParts) ? urlParts : [urlParts];
+    return this.page
+      .waitForResponse(
+        (res) => parts.every((part) => res.url().includes(part)),
+        { timeout: timeOut },
+      )
+      .catch(() => null);
   }
 
   /** lấy URL hiện tại của trang và chuyển các ký tự đã bị mã hóa trong URL về dạng dễ đọc. */

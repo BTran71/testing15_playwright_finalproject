@@ -11,6 +11,8 @@ export class TopBarComponent extends BasePage {
   private lnkInformation: Locator;
   private ddlCategory: Locator;
   private searchInput: Locator;
+  /** Link chi tiết khóa học trên trang kết quả — cùng selector với CourseListingPage. */
+  private resultCourseLinks: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -21,6 +23,7 @@ export class TopBarComponent extends BasePage {
     this.lnkEvent = page.getByRole("link", { name: "Sự kiện", exact: true });
     this.lnkInformation = page.getByRole("link", { name: "Thông tin" });
     this.searchInput = page.getByRole("textbox", { name: "Tìm kiếm" });
+    this.resultCourseLinks = page.locator('a[href*="/chitiet/"]');
   }
 
   async navigateToLoginPage(
@@ -81,16 +84,54 @@ export class TopBarComponent extends BasePage {
    * trang kết quả render sẵn "Hiển thị 0 kết quả" trong lúc API đang chạy,
    * nên phải đăng ký chờ response TRƯỚC khi nhấn Enter rồi mới chờ nó về.
    */
-  async submitSearchAndWaitResults() {
-    const apiDone = this.page
-      .waitForResponse(
-        (res) => res.url().includes(RouteConstants.API_COURSE_LIST),
-        { timeout: TimeOutConstants.TIME_OUT_API },
-      )
-      .catch(() => null); // trang không refetch (data có sẵn) thì bỏ qua
+  async submitSearchAndWaitResults(
+    apiTimeOut: number = TimeOutConstants.TIME_OUT_API,
+    renderTimeOut: number = TimeOutConstants.TIME_OUT_RENDER,
+  ) {
+    const apiDone = this.waitForApiResponse(
+      [RouteConstants.API_COURSE_LIST, "tenKhoaHoc="],
+      apiTimeOut,
+    );
     await this.pressEnterButtonToSearch();
-    await apiDone;
-    await this.page.waitForTimeout(300); // chờ React render danh sách sau khi có data
+    const response = await apiDone;
+
+    // chờ đã điều hướng sang trang kết quả để không đếm nhầm card của trang chủ
+    await this.page
+      .waitForURL(/\/timkiem\//, { timeout: apiTimeOut })
+      .catch(() => {});
+
+    let expected: number | null = null;
+    if (response) {
+      if (!response.ok()) {
+        expected = 0; // API trả status lỗi khi không có kết quả
+      } else {
+        const data = await response.json().catch(() => null);
+        if (Array.isArray(data)) expected = data.length;
+      }
+    }
+
+    if (expected !== null) {
+      // assertion tự retry của Playwright: trả về NGAY khi DOM render đủ card
+      await expect(this.resultCourseLinks).toHaveCount(expected, {
+        timeout: renderTimeOut,
+      });
+    } else {
+      // không bắt được response -> chờ số card đứng yên qua 2 lần đọc liên tiếp;
+      // hết thời gian thì bỏ qua, để assertion của test tự quyết định
+      let previous = -1;
+      await expect
+        .poll(
+          async () => {
+            const current = await this.resultCourseLinks.count();
+            const stable = current === previous;
+            previous = current;
+            return stable;
+          },
+          { timeout: renderTimeOut },
+        )
+        .toBe(true)
+        .catch(() => {});
+    }
   }
 
   /** Tìm kiếm trọn gói: nhập từ khóa -> Enter -> chờ kết quả thật. */
