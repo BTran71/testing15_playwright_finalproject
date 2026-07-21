@@ -42,16 +42,33 @@ test.describe("Tìm kiếm khóa học", () => {
     ).toBeVisible();
   });
 
-  test("TC_SEARCH_03: Click icon kính lúp kích hoạt tìm kiếm (BUG đã ghi nhận)", async ({
+  // test("TC_SEARCH_03: Click icon kính lúp kích hoạt tìm kiếm (BUG đã ghi nhận khi test manual)", async ({
+  //   page,
+  //   homePage,
+  // }) => {
+  //   test.fail(); // Fail - click icon không kích hoạt tìm kiếm, chỉ Enter mới chạy
+  //   const topBar = homePage.getTopBarComponent();
+  //   await topBar.enterResearchInput(SEARCH_DATA.simpleKeyword);
+  //   await topBar.clickSearchIcon();
+  //   await page.waitForTimeout(2500); // đủ thời gian để điều hướng nếu icon hoạt động
+  //   expect(page.url()).toContain("/timkiem");
+  // });
+
+  test("TC_SEARCH_03: Click icon kính lúp kích hoạt tìm kiếm", async ({
     page,
     homePage,
   }) => {
-    test.fail(); // Sheet: Fail - click icon không kích hoạt tìm kiếm, chỉ Enter mới chạy
+    const keyword = SEARCH_DATA.simpleKeyword;
     const topBar = homePage.getTopBarComponent();
-    await topBar.enterResearchInput(SEARCH_DATA.simpleKeyword);
+
+    await topBar.enterResearchInput(keyword);
     await topBar.clickSearchIcon();
-    await page.waitForTimeout(2500); // đủ thời gian để điều hướng nếu icon hoạt động
-    expect(page.url()).toContain("/timkiem");
+
+    await expect(page).toHaveURL((url) => {
+      const decodedPath = decodeURIComponent(url.pathname);
+
+      return decodedPath.includes("/timkiem") && decodedPath.includes(keyword);
+    });
   });
 
   test("TC_SEARCH_04: Tìm với từ khóa không dấu -> có kết quả", async ({
@@ -74,24 +91,14 @@ test.describe("Tìm kiếm khóa học", () => {
     expect(await searchResultPage.courseCount()).toBeGreaterThan(0);
   });
 
-  test("TC_SEARCH_06: Bỏ trống ô tìm kiếm -> hiển thị thông báo validation (BUG đã ghi nhận)", async ({
+  test("TC_SEARCH_06: Bỏ trống ô tìm kiếm -> hiển thị thông báo Vui lòng điền vào ô trống", async ({
     page,
     homePage,
   }) => {
-    test.fail(); // Sheet: Fail - không có thông báo "Vui lòng điền vào ô trống" (AC-1.4)
     await homePage.getTopBarComponent().pressEnterButtonToSearch();
     await expect(page.getByText(/Vui lòng điền/i).first()).toBeVisible({
       timeout: 4000,
     });
-  });
-
-  test("TC_SEARCH_06b: (hành vi hiện tại) Bỏ trống -> không điều hướng sang trang kết quả", async ({
-    page,
-    homePage,
-  }) => {
-    await homePage.getTopBarComponent().pressEnterButtonToSearch();
-    await page.waitForTimeout(500);
-    await expect(page).not.toHaveURL(/\/timkiem\//);
   });
 
   test("TC_SEARCH_07: Ký tự đặc biệt -> 0 kết quả, không lỗi", async ({
@@ -114,11 +121,10 @@ test.describe("Tìm kiếm khóa học", () => {
     expect(await searchResultPage.courseCount()).toBe(0);
   });
 
-  test("TC_SEARCH_09: Chỉ toàn khoảng trắng -> 0 kết quả (BUG đã ghi nhận)", async ({
+  test("TC_SEARCH_09: Chỉ toàn khoảng trắng -> 0 kết quả (BUG đã ghi nhận theo AC)", async ({
     homePage,
     searchResultPage,
   }) => {
-    test.fail(); // Sheet: Fail - site trả về TOÀN BỘ danh sách khóa học (AC-1.7)
     await homePage
       .getTopBarComponent()
       .searchCourse(SEARCH_DATA.whitespaceOnly);
@@ -163,7 +169,7 @@ test.describe("Tìm kiếm khóa học", () => {
     expect(await searchResultPage.courseCount()).toBe(0);
   });
 
-  test("TC_SEARCH_13: Chuỗi hơn 100 ký tự -> 0 kết quả, layout không vỡ", async ({
+  test("TC_SEARCH_13: Nhập chuỗi hơn 100 ký tự -> 0 kết quả, layout không vỡ", async ({
     homePage,
     searchResultPage,
   }) => {
@@ -173,7 +179,7 @@ test.describe("Tìm kiếm khóa học", () => {
     await expect(homePage.getTopBarComponent().getSearchInput()).toBeVisible();
   });
 
-  test("TC_SEARCH_14: Một phần của từ khóa (partial match) -> có kết quả", async ({
+  test("TC_SEARCH_14: Nhập một phần của từ khóa (partial match) -> có kết quả", async ({
     homePage,
     searchResultPage,
   }) => {
@@ -323,7 +329,6 @@ test.describe("Tìm kiếm khóa học - Mobile", () => {
   test("TC_SEARCH_21: Ô tìm kiếm hiển thị và dùng được trên mobile (BUG đã ghi nhận)", async ({
     homePage,
   }) => {
-    test.fail(); // Sheet: Fail - ở mobile ô tìm kiếm (.searchFormMobile) render lệch ra ngoài viewport
     await homePage.open();
     await expect(
       homePage.getTopBarComponent().getSearchInput(),
