@@ -49,7 +49,7 @@ export class LoginPage extends CommonPage {
     await this.enterAccounttInput(account);
     await this.enterPasswordInput(password);
     await this.clickLoginButton();
-    await this.clickForgetPasswordLink();
-    await this.clickTranslateRegisterButton();
+    // await this.clickForgetPasswordLink();
+    // await this.clickTranslateRegisterButton();
   }
 }
