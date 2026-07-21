@@ -73,26 +73,24 @@ export class RegisterPage extends CommonPage {
   async selectGroupCodeDropDown(value: string) {
     await this.selectOption(this.ddlGroupCode, value);
     const texts = await this.ddlGroupCode.locator("option").allTextContents();
-
-    console.log(texts);
   }
 
   async register(
     account: string,
     password: string,
-    rePassword: string,
     email: string,
+    phoneNumber: string,
     fullname: string,
-    groupCode: string,
+    // groupCode: string,
   ) {
     await this.enterAccountInput(account);
     await this.enterFullnameInput(fullname);
     await this.enterPasswordInput(password);
     await this.enterEmailInput(email);
-    await this.enterPhoneNumber(rePassword);
+    await this.enterPhoneNumber(phoneNumber);
     await this.chooseGroupCode();
     await this.clickRegisterButton();
-    await this.clickReturnLoginButton();
-    await this.selectGroupCodeDropDown(groupCode);
+    // await this.clickReturnLoginButton();
+    // await this.selectGroupCodeDropDown(groupCode);
   }
 }

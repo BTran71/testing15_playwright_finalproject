@@ -49,10 +49,18 @@ test.describe("Register Page Test", () => {
     page,
     registerPage,
   }) => {
+    account = "";
     password = "Testing15@";
     fullname = "Testing playwright";
     email = `example@gmail.com`;
 
+    // await registerPage.register(
+    //   account,
+    //   password,
+    //   email,
+    //   phoneNumber,
+    //   fullname,
+    // );
     await registerPage.enterFullnameInput(fullname);
 
     await registerPage.enterPasswordInput(password);
