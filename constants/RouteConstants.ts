@@ -28,6 +28,13 @@ export class RouteConstants {
    * trang danh mục đều gọi endpoint này để đổ dữ liệu card).
    */
   static readonly API_COURSE_LIST = "/api/QuanLyKhoaHoc/LayDanhSachKhoaHoc";
+
+  /**
+   * API phân trang của trang /khoahoc (payload dạng { items: [...] }):
+   * LayDanhSachKhoaHoc_PhanTrang?page=<n>&pageSize=12&MaNhom=GP01
+   */
+  static readonly API_COURSE_LIST_PAGED =
+    "/api/QuanLyKhoaHoc/LayDanhSachKhoaHoc_PhanTrang";
 }
 
 /** Mã danh mục (lĩnh vực) hợp lệ trên site, lấy từ menu "DANH MỤC". */

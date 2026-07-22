@@ -70,6 +70,29 @@ export class TopBarComponent extends BasePage {
     return this.searchInput;
   }
 
+  // ===== getters cho các test kiểm tra hiển thị header =====
+  getLogo(): Locator {
+    return this.page.locator(".textLogo img");
+  }
+  getCategoryLink(): Locator {
+    return this.ddlCategory;
+  }
+  getCourseLink(): Locator {
+    return this.lnkCourse;
+  }
+  getBlogLink(): Locator {
+    return this.lnkBlog;
+  }
+  getEventLink(): Locator {
+    return this.lnkEvent;
+  }
+  getInformationLink(): Locator {
+    return this.lnkInformation;
+  }
+  getLoginButton(): Locator {
+    return this.lnkLogin;
+  }
+
   async enterResearchInput(info: string) {
     await this.searchInput.fill(info);
   }
@@ -84,6 +107,7 @@ export class TopBarComponent extends BasePage {
    * trang kết quả render sẵn "Hiển thị 0 kết quả" trong lúc API đang chạy,
    * nên phải đăng ký chờ response TRƯỚC khi nhấn Enter rồi mới chờ nó về.
    */
+
   async submitSearchAndWaitResults(
     apiTimeOut: number = TimeOutConstants.TIME_OUT_API,
     renderTimeOut: number = TimeOutConstants.TIME_OUT_RENDER,
@@ -100,38 +124,11 @@ export class TopBarComponent extends BasePage {
       .waitForURL(/\/timkiem\//, { timeout: apiTimeOut })
       .catch(() => {});
 
-    let expected: number | null = null;
-    if (response) {
-      if (!response.ok()) {
-        expected = 0; // API trả status lỗi khi không có kết quả
-      } else {
-        const data = await response.json().catch(() => null);
-        if (Array.isArray(data)) expected = data.length;
-      }
-    }
-
-    if (expected !== null) {
-      // assertion tự retry của Playwright: trả về NGAY khi DOM render đủ card
-      await expect(this.resultCourseLinks).toHaveCount(expected, {
-        timeout: renderTimeOut,
-      });
-    } else {
-      // không bắt được response -> chờ số card đứng yên qua 2 lần đọc liên tiếp;
-      // hết thời gian thì bỏ qua, để assertion của test tự quyết định
-      let previous = -1;
-      await expect
-        .poll(
-          async () => {
-            const current = await this.resultCourseLinks.count();
-            const stable = current === previous;
-            previous = current;
-            return stable;
-          },
-          { timeout: renderTimeOut },
-        )
-        .toBe(true)
-        .catch(() => {});
-    }
+    await this.waitForCountToMatchResponse(
+      this.resultCourseLinks,
+      response,
+      renderTimeOut,
+    );
   }
 
   /** Tìm kiếm trọn gói: nhập từ khóa -> Enter -> chờ kết quả thật. */
