@@ -3,6 +3,7 @@ import { HomePage } from "../pages/HomePage";
 import { LoginPage } from "../pages/LoginPage";
 import { RegisterPage } from "../pages/RegisterPage";
 import { SearchResultPage } from "../pages/SearchResultPage";
+import { CourseCatalogPage } from "../pages/CourseCatalogPage";
 
 type MyFixture = {
   homePage: HomePage;
@@ -10,6 +11,7 @@ type MyFixture = {
   registerPage: RegisterPage;
   //them cac page khac khi mo rong
   searchResultPage: SearchResultPage;
+  courseCatalogPage: CourseCatalogPage;
 };
 
 export const test = base.extend<MyFixture>({
@@ -35,10 +37,14 @@ export const test = base.extend<MyFixture>({
     await use(registerPage);
   },
 
-    searchResultPage: async ({ page }, use) => {
+  searchResultPage: async ({ page }, use) => {
     const searchResultPage = new SearchResultPage(page);
     await use(searchResultPage);
   },
 
+  courseCatalogPage: async ({ page }, use) => {
+    const courseCatalogPage = new CourseCatalogPage(page);
+    await use(courseCatalogPage);
+  },
 });
 export { expect } from "@playwright/test";
