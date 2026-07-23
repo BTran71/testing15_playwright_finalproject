@@ -208,7 +208,7 @@ test.describe("Danh sách khóa học", () => {
     await expect(courseCatalogPage.getDotsButton()).toBeVisible();
   });
 
-  test("TC_LIST_15: Click số trang 2 điều hướng và cập nhật danh sách", async ({
+  test("TC_LIST_15: Click trang số 2, điều hướng sang trang 2 và cập nhật danh sách", async ({
     courseCatalogPage,
   }) => {
     const namesPage1 = await courseCatalogPage.getAllCardNames();
@@ -219,7 +219,7 @@ test.describe("Danh sách khóa học", () => {
     expect(namesPage2.join("|")).not.toBe(namesPage1.join("|"));
   });
 
-  test("TC_LIST_16: Nút Sau / Trước điều hướng đúng trang kế tiếp / trước đó", async ({
+  test("TC_LIST_16: Click nút Sau / Trước điều hướng sang đúng trang kế tiếp / trước đó", async ({
     courseCatalogPage,
   }) => {
     await courseCatalogPage.goToNextPage();
@@ -257,7 +257,7 @@ test.describe("Danh sách khóa học", () => {
     expect(await courseCatalogPage.getActivePageNumber()).toBe(lastPage);
   });
 
-  test("TC_LIST_19: Click dấu ... nhảy tới trang kế tiếp trong nhóm bị lược", async ({
+  test("TC_LIST_19: Click dấu ... nhảy tới trang kế tiếp trong nhóm bị lược bớt", async ({
     courseCatalogPage,
   }) => {
     await courseCatalogPage.clickPaginationDots();
@@ -266,12 +266,20 @@ test.describe("Danh sách khóa học", () => {
     expect(await courseCatalogPage.courseCount()).toBeGreaterThan(0);
   });
 
-  test("TC_LIST_20: Reload trang vẫn hiển thị danh sách hợp lệ", async ({
+  // BUG đã ghi nhận Fail khi test manual - đang ở trang 3, nhấn F5 thì danh sách
+  // trở về trang 1 chứ không giữ nguyên trang đang xem (AC-2.9).
+  // Test assert theo expected result -> FAIL cho tới khi dev fix.
+  test("TC_LIST_20: Reload giữ nguyên trang phân trang đang xem (BUG đã ghi nhận khi test manual)", async ({
     courseCatalogPage,
   }) => {
+    await courseCatalogPage.goToPage(3);
+    expect(await courseCatalogPage.getActivePageNumber()).toBe(3);
     await courseCatalogPage.reload();
+    // reload xong vẫn phải hiển thị danh sách hợp lệ...
     expect(await courseCatalogPage.courseCount()).toBeGreaterThan(0);
     await expect(courseCatalogPage.getPagination()).toBeVisible();
+    // ...và giữ nguyên trang 3 như trước khi reload
+    expect(await courseCatalogPage.getActivePageNumber()).toBe(3);
   });
 
   test("TC_LIST_21: Click card điều hướng sang trang chi tiết", async ({
@@ -290,7 +298,7 @@ test.describe("Danh sách khóa học", () => {
     await expect(page).toHaveURL(/\/chitiet\/.+/);
   });
 
-  // BUG đã ghi nhận (Sheet: Fail) - Back từ trang chi tiết làm danh sách reset
+  // BUG đã ghi nhận Fail khi test manual - Back từ trang chi tiết làm danh sách reset
   // về trang 1, không giữ trang 3 (số trang không được lưu trên URL /khoahoc).
   // Test assert theo expected result -> FAIL cho tới khi dev fix.
   test("TC_LIST_23: Back từ trang chi tiết giữ nguyên trạng thái phân trang (BUG đã ghi nhận)", async ({
@@ -334,10 +342,10 @@ test.describe("Danh sách khóa học", () => {
     expect(await courseCatalogPage.courseCount()).toBeGreaterThan(0);
   });
 
-  // BUG đã ghi nhận (Sheet: Fail) - mất mạng chỉ hiển thị vòng tròn loading,
+  // BUG đã ghi nhận Fail khi test manual - mất mạng chỉ hiển thị vòng tròn loading,
   // không có thông báo "Vui lòng kết nối mạng" (AC-2.13).
   // Test assert theo expected result -> FAIL cho tới khi dev fix.
-  test("TC_LIST_28: Mất kết nối mạng hiển thị thông báo (BUG đã ghi nhận)", async ({
+  test("TC_LIST_28: Hiển thị thông báo khi mất kết nối mạng", async ({
     page,
     context,
     courseCatalogPage,
