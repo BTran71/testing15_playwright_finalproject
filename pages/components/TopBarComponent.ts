@@ -31,7 +31,9 @@ export class TopBarComponent extends BasePage {
   ) {
     // ,,
     // await this.lnkLogin.click();
-    await this.click(this.lnkLogin, timeOut);
+    await test.step("Mở trang đăng nhập từ header", async () => {
+      await this.click(this.lnkLogin, timeOut);
+    });
   }
 
   async navigateToBlogPage(
@@ -124,29 +126,33 @@ export class TopBarComponent extends BasePage {
     apiTimeOut: number = TimeOutConstants.TIME_OUT_API,
     renderTimeOut: number = TimeOutConstants.TIME_OUT_RENDER,
   ) {
-    const apiDone = this.waitForApiResponse(
-      [RouteConstants.API_COURSE_LIST, "tenKhoaHoc="],
-      apiTimeOut,
-    );
-    await this.pressEnterButtonToSearch();
-    const response = await apiDone;
+    await test.step("Nhấn Enter tìm kiếm và chờ kết quả render xong", async () => {
+      const apiDone = this.waitForApiResponse(
+        [RouteConstants.API_COURSE_LIST, "tenKhoaHoc="],
+        apiTimeOut,
+      );
+      await this.pressEnterButtonToSearch();
+      const response = await apiDone;
 
-    // chờ đã điều hướng sang trang kết quả để không đếm nhầm card của trang chủ
-    await this.page
-      .waitForURL(/\/timkiem\//, { timeout: apiTimeOut })
-      .catch(() => {});
+      // chờ đã điều hướng sang trang kết quả để không đếm nhầm card của trang chủ
+      await this.page
+        .waitForURL(/\/timkiem\//, { timeout: apiTimeOut })
+        .catch(() => {});
 
-    await this.waitForCountToMatchResponse(
-      this.resultCourseLinks,
-      response,
-      renderTimeOut,
-    );
+      await this.waitForCountToMatchResponse(
+        this.resultCourseLinks,
+        response,
+        renderTimeOut,
+      );
+    });
   }
 
   /** Tìm kiếm trọn gói: nhập từ khóa -> Enter -> chờ kết quả thật. */
   async searchCourse(keyword: string) {
-    await this.enterResearchInput(keyword);
-    await this.submitSearchAndWaitResults();
+    await test.step(`Tìm kiếm khóa học với từ khóa "${keyword}"`, async () => {
+      await this.enterResearchInput(keyword);
+      await this.submitSearchAndWaitResults();
+    });
   }
 
   /**

@@ -1,4 +1,4 @@
-import { Locator, Page } from "@playwright/test";
+import { Locator, Page, test } from "@playwright/test";
 import { CommonPage } from "./CommonPage";
 
 /**
@@ -73,6 +73,19 @@ export class CourseListingPage extends CommonPage {
     return this.courseCards.locator(".stikerCard").allTextContents();
   }
 
+  /**
+   * href link chi tiết của TẤT CẢ card đang hiển thị (theo thứ tự card).
+   * Dùng để rà soát card có mã khóa học rỗng (href="/chitiet/" -> dẫn tới 404).
+   */
+  async getAllCardHrefs(): Promise<string[]> {
+    const count = await this.courseCards.count();
+    const hrefs: string[] = [];
+    for (let i = 0; i < count; i++) {
+      hrefs.push((await this.courseCards.nth(i).getAttribute("href")) ?? "");
+    }
+    return hrefs;
+  }
+
   /** Cặp { tên khóa học, url hình ảnh } của mọi card đang hiển thị. */
   async getCardNameImagePairs(): Promise<{ name: string; src: string }[]> {
     const count = await this.courseCards.count();
@@ -115,8 +128,11 @@ export class CourseListingPage extends CommonPage {
 
   /** Click (hoặc double click) vào card khóa học đầu tiên có mã hợp lệ. */
   async openFirstRealCourse(useDoubleClick = false): Promise<void> {
-    const card = this.courseLinks.nth(await this.firstRealCourseIndex());
-    if (useDoubleClick) await card.dblclick();
-    else await card.click();
+    const action = useDoubleClick ? "Double click" : "Click";
+    await test.step(`${action} vào card khóa học hợp lệ đầu tiên`, async () => {
+      const card = this.courseLinks.nth(await this.firstRealCourseIndex());
+      if (useDoubleClick) await card.dblclick();
+      else await card.click();
+    });
   }
 }

@@ -1,4 +1,4 @@
-import { Locator, Page } from "@playwright/test";
+import { Locator, Page, test } from "@playwright/test";
 import { CourseListingPage } from "./CourseListingPage";
 import { RouteConstants } from "../constants/RouteConstants";
 import { TimeOutConstants } from "../constants/TimeOutConstants";
@@ -31,14 +31,16 @@ export class CategoryNavigation extends CourseListingPage {
     categoryCode: string,
     timeOut: number = TimeOutConstants.TIME_OUT_MEDIUM,
   ) {
-    const apiDone = this.waitForApiResponse(
-      [RouteConstants.API_COURSE_BY_CATEGORY, `maDanhMuc=${categoryCode}`],
-      timeOut,
-    );
-    await this.page.goto(RouteConstants.category(categoryCode), {
-      waitUntil: "domcontentloaded",
+    await test.step(`Mở trang danh mục ${categoryCode} bằng URL trực tiếp`, async () => {
+      const apiDone = this.waitForApiResponse(
+        [RouteConstants.API_COURSE_BY_CATEGORY, `maDanhMuc=${categoryCode}`],
+        timeOut,
+      );
+      await this.page.goto(RouteConstants.category(categoryCode), {
+        waitUntil: "domcontentloaded",
+      });
+      await this.waitForCountToMatchResponse(this.courseCards, await apiDone);
     });
-    await this.waitForCountToMatchResponse(this.courseCards, await apiDone);
   }
 
   /**
@@ -49,14 +51,16 @@ export class CategoryNavigation extends CourseListingPage {
     categoryCode: string,
     timeOut: number = TimeOutConstants.TIME_OUT_API,
   ) {
-    const topBar = this.getTopBarComponent();
-    await topBar.hoverCategory();
-    const apiDone = this.waitForApiResponse(
-      [RouteConstants.API_COURSE_BY_CATEGORY, `maDanhMuc=${categoryCode}`],
-      timeOut,
-    );
-    await topBar.getCategoryMenuItem(categoryCode).click();
-    await this.waitForCountToMatchResponse(this.courseCards, await apiDone);
+    await test.step(`Điều hướng tới danh mục ${categoryCode} qua menu DANH MỤC`, async () => {
+      const topBar = this.getTopBarComponent();
+      await topBar.hoverCategory();
+      const apiDone = this.waitForApiResponse(
+        [RouteConstants.API_COURSE_BY_CATEGORY, `maDanhMuc=${categoryCode}`],
+        timeOut,
+      );
+      await topBar.getCategoryMenuItem(categoryCode).click();
+      await this.waitForCountToMatchResponse(this.courseCards, await apiDone);
+    });
   }
 
   /** Banner "Khóa học theo danh mục". */
@@ -85,7 +89,11 @@ export class CategoryNavigation extends CourseListingPage {
 
   /** 3 thông tin thời lượng trên thân card (giờ / tuần / cấp độ). */
   getCardDurationInfos(index = 0): Locator {
-    return this.courseCards.nth(index).locator(".cardIcon").first().locator("span");
+    return this.courseCards
+      .nth(index)
+      .locator(".cardIcon")
+      .first()
+      .locator("span");
   }
 
   getCardTeacher(index = 0): Locator {
