@@ -142,13 +142,38 @@ test.describe("Điều hướng khóa học theo danh mục", () => {
     await expect(card).toHaveCSS("cursor", "pointer");
   });
 
-  test("TC_CATE_09: Click khóa học trong danh mục điều hướng sang trang chi tiết", async ({
+  // BUG đã ghi nhận khi test maunal - trong danh mục "Lập trình di động" có card
+  // ("Lập trình web") mang link /chitiet/ KHÔNG kèm courseId -> click ra trang
+  // 404 "Có gì đó sai ở đây". Vị trí card lỗi trôi theo dữ liệu nên test quét
+  // TOÀN BỘ link card của cả 6 danh mục thay vì soi 1 vị trí cố định.
+  // Test assert theo expected result -> FAIL cho tới khi dev fix data.
+  test("TC_CATE_09: Click khóa học trong danh mục điều hướng sang trang chi tiết (BUG đã ghi nhận)", async ({
     page,
     categoryNavigationPage,
+    courseDetailPage,
   }) => {
-    await categoryNavigationPage.open("FrontEnd");
-    await categoryNavigationPage.openFirstRealCourse();
-    await expect(page).toHaveURL(/\/chitiet\/.+/);
+    test.slow(); // duyệt cả 6 danh mục, mỗi danh mục mở thử 1 trang chi tiết
+    const invalidCards: string[] = [];
+
+    for (const { code } of CATEGORY_DATA.categories) {
+      await categoryNavigationPage.open(code);
+
+      // gom các card có link thiếu mã khóa học (dạng "/chitiet/" trơ trọi)
+      const hrefs = await categoryNavigationPage.getAllCardHrefs();
+      hrefs.forEach((href, index) => {
+        if (!/\/chitiet\/.{2,}/.test(href)) {
+          invalidCards.push(`${code} - card thứ ${index + 1}: href="${href}"`);
+        }
+      });
+
+      // card hợp lệ vẫn phải điều hướng đúng tới trang chi tiết thật
+      await categoryNavigationPage.openFirstRealCourse();
+      await expect(page).toHaveURL(/\/chitiet\/.+/);
+      await expect(courseDetailPage.getCourseTitle()).toBeVisible();
+    }
+
+    // expected: MỌI card trong 6 danh mục đều có courseId trong link
+    expect(invalidCards).toEqual([]);
   });
 
   // BUG đã ghi nhận khi test manual - trang chi tiết LUÔN hiển thị

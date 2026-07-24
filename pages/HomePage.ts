@@ -1,5 +1,5 @@
 import { CommonPage } from "./CommonPage";
-import { Page } from "@playwright/test";
+import { Page, test } from "@playwright/test";
 import { RouteConstants } from "../constants/RouteConstants";
 import { TimeOutConstants } from "../constants/TimeOutConstants";
 
@@ -15,13 +15,15 @@ export class HomePage extends CommonPage {
    * để response này không gây nhiễu cho lần chờ response khi search ngay sau đó.
    */
   async open(timeOut: number = TimeOutConstants.TIME_OUT_API) {
-    const apiDone = this.waitForApiResponse(
-      RouteConstants.API_COURSE_LIST,
-      timeOut,
-    );
-    await this.page.goto(RouteConstants.HOME, {
-      waitUntil: "domcontentloaded",
+    await test.step("Mở trang chủ và chờ API danh sách khóa học tải xong", async () => {
+      const apiDone = this.waitForApiResponse(
+        RouteConstants.API_COURSE_LIST,
+        timeOut,
+      );
+      await this.page.goto(RouteConstants.HOME, {
+        waitUntil: "domcontentloaded",
+      });
+      await apiDone;
     });
-    await apiDone;
   }
 }

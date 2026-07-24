@@ -1,4 +1,4 @@
-import { Locator, Page } from "@playwright/test";
+import { Locator, Page, test } from "@playwright/test";
 import { CourseListingPage } from "./CourseListingPage";
 import { RouteConstants } from "../constants/RouteConstants";
 import { TimeOutConstants } from "../constants/TimeOutConstants";
@@ -31,14 +31,16 @@ export class CourseCatalogPage extends CourseListingPage {
    * phải gánh cả thời gian goto + boot app + gọi API trên site demo chậm.
    */
   async open(timeOut: number = TimeOutConstants.TIME_OUT_MEDIUM) {
-    const apiDone = this.waitForApiResponse(
-      RouteConstants.API_COURSE_LIST_PAGED,
-      timeOut,
-    );
-    await this.page.goto(RouteConstants.COURSE_LIST, {
-      waitUntil: "domcontentloaded",
+    await test.step("Mở trang Danh sách khóa học và chờ lưới card tải xong", async () => {
+      const apiDone = this.waitForApiResponse(
+        RouteConstants.API_COURSE_LIST_PAGED,
+        timeOut,
+      );
+      await this.page.goto(RouteConstants.COURSE_LIST, {
+        waitUntil: "domcontentloaded",
+      });
+      await this.waitForCountToMatchResponse(this.courseLinks, await apiDone);
     });
-    await this.waitForCountToMatchResponse(this.courseLinks, await apiDone);
   }
 
   // ===== banner, thống kê, header, loading =====
@@ -126,36 +128,48 @@ export class CourseCatalogPage extends CourseListingPage {
   }
 
   async goToPage(n: number) {
-    await this.clickAndWaitReload(this.getPageButton(n));
+    await test.step(`Chuyển tới trang phân trang số ${n}`, async () => {
+      await this.clickAndWaitReload(this.getPageButton(n));
+    });
   }
 
   async goToNextPage() {
-    await this.clickAndWaitReload(this.getNextButton());
+    await test.step('Click "Sau >" chuyển tới trang kế tiếp', async () => {
+      await this.clickAndWaitReload(this.getNextButton());
+    });
   }
 
   async goToPreviousPage() {
-    await this.clickAndWaitReload(this.getPrevButton());
+    await test.step('Click "< Trước" quay về trang trước', async () => {
+      await this.clickAndWaitReload(this.getPrevButton());
+    });
   }
 
   async clickPaginationDots() {
-    await this.clickAndWaitReload(this.getDotsButton());
+    await test.step('Click dấu "..." trên thanh phân trang', async () => {
+      await this.clickAndWaitReload(this.getDotsButton());
+    });
   }
 
   /** Reload trang (F5) và chờ danh sách tải lại. */
   async reload() {
-    const apiDone = this.waitForApiResponse(
-      RouteConstants.API_COURSE_LIST_PAGED,
-    );
-    await this.page.reload({ waitUntil: "domcontentloaded" });
-    await this.waitForCountToMatchResponse(this.courseLinks, await apiDone);
+    await test.step("Reload trang và chờ danh sách tải lại", async () => {
+      const apiDone = this.waitForApiResponse(
+        RouteConstants.API_COURSE_LIST_PAGED,
+      );
+      await this.page.reload({ waitUntil: "domcontentloaded" });
+      await this.waitForCountToMatchResponse(this.courseLinks, await apiDone);
+    });
   }
 
   /** Bấm Back của trình duyệt để quay lại danh sách và chờ tải lại. */
   async goBackToList() {
-    const apiDone = this.waitForApiResponse(
-      RouteConstants.API_COURSE_LIST_PAGED,
-    );
-    await this.page.goBack({ waitUntil: "domcontentloaded" });
-    await this.waitForCountToMatchResponse(this.courseLinks, await apiDone);
+    await test.step("Bấm Back quay lại trang danh sách và chờ tải lại", async () => {
+      const apiDone = this.waitForApiResponse(
+        RouteConstants.API_COURSE_LIST_PAGED,
+      );
+      await this.page.goBack({ waitUntil: "domcontentloaded" });
+      await this.waitForCountToMatchResponse(this.courseLinks, await apiDone);
+    });
   }
 }

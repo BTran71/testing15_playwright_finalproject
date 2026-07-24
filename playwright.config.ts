@@ -26,18 +26,18 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: "html",
+  reporter: [["list"], ["html"]],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
     // baseURL: 'http://localhost:3000',
     baseURL: "https://demo2.cybersoft.edu.vn/",
 
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: "on-first-retry",
-
-    screenshot: "only-on-failure",
-    actionTimeout: 20000, //mặc định là 0 (k có timeout), nếu action nào chạy quá 10s sẽ fail
+    /* Bằng chứng trả về khi test FAIL (chỉ ghi khi fail, không làm chậm test pass) */
+    screenshot: "only-on-failure", // ảnh chụp đúng thời điểm fail, tự đính vào report
+    video: "retain-on-failure", // video toàn bộ quá trình chạy của test fail
+    trace: "retain-on-failure", // log chi tiết từng action/network/console, mở bằng: npx playwright show-trace
+    actionTimeout: 20000, //mặc định là 0 (k có timeout), action nào chạy quá 15s sẽ fail
   },
 
   /* Configure projects for major browsers */
