@@ -27,6 +27,15 @@ export class CourseListingPage extends CommonPage {
     return this.courseLinks.count();
   }
 
+  /**
+   * Số lượng CARD đang hiển thị (đếm theo .cardGlobal). Dùng thay courseCount()
+   * ở các trang mà 1 card chứa nhiều link chi tiết (vd trang danh mục có thêm
+   * nút "Xem chi tiết" trong overlay -> số link = 2 lần số card).
+   */
+  async cardCount(): Promise<number> {
+    return this.courseCards.count();
+  }
+
   // ===== getters cho từng thành phần trên card thứ i (0-based) =====
   /** Hình ảnh chính của card (img đầu tiên; img thứ hai là avatar tác giả). */
   getCardImage(index = 0): Locator {
