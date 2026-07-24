@@ -93,6 +93,18 @@ export class TopBarComponent extends BasePage {
     return this.lnkLogin;
   }
 
+  /** 6 link lĩnh vực trong dropdown menu DANH MỤC (menu desktop). */
+  getCategoryMenuItems(): Locator {
+    return this.page.locator('.menuHeader a[href^="/danhmuckhoahoc/"]');
+  }
+
+  /** Link 1 lĩnh vực trong dropdown DANH MỤC theo mã danh mục. */
+  getCategoryMenuItem(categoryCode: string): Locator {
+    return this.page.locator(
+      `.menuHeader a[href="${RouteConstants.category(categoryCode)}"]`,
+    );
+  }
+
   async enterResearchInput(info: string) {
     await this.searchInput.fill(info);
   }

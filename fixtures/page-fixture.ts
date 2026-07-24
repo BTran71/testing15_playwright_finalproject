@@ -4,6 +4,8 @@ import { LoginPage } from "../pages/LoginPage";
 import { RegisterPage } from "../pages/RegisterPage";
 import { SearchResultPage } from "../pages/SearchResultPage";
 import { CourseCatalogPage } from "../pages/CourseCatalogPage";
+import { CategoryNavigation } from "../pages/CategoryNavigation";
+import { CourseDetailPage } from "../pages/CourseDetailPage";
 
 type MyFixture = {
   homePage: HomePage;
@@ -12,6 +14,8 @@ type MyFixture = {
   //them cac page khac khi mo rong
   searchResultPage: SearchResultPage;
   courseCatalogPage: CourseCatalogPage;
+  categoryNavigationPage: CategoryNavigation;
+  courseDetailPage: CourseDetailPage;
 };
 
 export const test = base.extend<MyFixture>({
@@ -45,6 +49,16 @@ export const test = base.extend<MyFixture>({
   courseCatalogPage: async ({ page }, use) => {
     const courseCatalogPage = new CourseCatalogPage(page);
     await use(courseCatalogPage);
+  },
+
+  categoryNavigationPage: async ({ page }, use) => {
+    const categoryNavigationPage = new CategoryNavigation(page);
+    await use(categoryNavigationPage);
+  },
+
+  courseDetailPage: async ({ page }, use) => {
+    const courseDetailPage = new CourseDetailPage(page);
+    await use(courseDetailPage);
   },
 });
 export { expect } from "@playwright/test";
