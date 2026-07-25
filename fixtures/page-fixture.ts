@@ -6,6 +6,7 @@ import { SearchResultPage } from "../pages/SearchResultPage";
 import { CourseCatalogPage } from "../pages/CourseCatalogPage";
 import { CategoryNavigation } from "../pages/CategoryNavigation";
 import { CourseDetailPage } from "../pages/CourseDetailPage";
+import { CourseListingPage } from "../pages/CourseListingPage";
 
 type MyFixture = {
   homePage: HomePage;
@@ -16,6 +17,7 @@ type MyFixture = {
   courseCatalogPage: CourseCatalogPage;
   categoryNavigationPage: CategoryNavigation;
   courseDetailPage: CourseDetailPage;
+  courseListingPage: CourseListingPage;
 };
 
 export const test = base.extend<MyFixture>({
@@ -59,6 +61,10 @@ export const test = base.extend<MyFixture>({
   courseDetailPage: async ({ page }, use) => {
     const courseDetailPage = new CourseDetailPage(page);
     await use(courseDetailPage);
+  },
+  courseListingPage: async ({ page }, use) => {
+    const courseListingPage = new CourseListingPage(page);
+    await use(courseListingPage);
   },
 });
 export { expect } from "@playwright/test";

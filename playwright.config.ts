@@ -34,7 +34,7 @@ export default defineConfig({
     baseURL: "https://demo2.cybersoft.edu.vn/",
 
     /* Bằng chứng trả về khi test FAIL (chỉ ghi khi fail, không làm chậm test pass) */
-    screenshot: "only-on-failure", // ảnh chụp đúng thời điểm fail, tự đính vào report
+    screenshot: { mode: "only-on-failure", fullPage: true }, // ảnh chụp đúng thời điểm fail, tự đính vào report
     video: "retain-on-failure", // video toàn bộ quá trình chạy của test fail
     trace: "retain-on-failure", // log chi tiết từng action/network/console, mở bằng: npx playwright show-trace
     actionTimeout: 20000, //mặc định là 0 (k có timeout), action nào chạy quá 15s sẽ fail
