@@ -8,10 +8,7 @@ import { CATEGORY_DATA } from "../../test-data/category-data";
  *
  * Các case là BUG đã ghi nhận Fail trong sheet (TC_6, TC_10, TC_12) được
  * assert theo ĐÚNG expected result của sheet -> chạy sẽ FAIL cho tới khi dev
- * fix bug. Fail của các case này là KẾT QUẢ ĐÚNG, khớp status Fail trong sheet.
- *
- * Site là môi trường demo, dữ liệu thay đổi liên tục -> không hardcode số
- * lượng khóa học, chỉ assert quan hệ (>0, khác nhau giữa các lĩnh vực).
+ * fix bug.
  *
  * Toàn bộ logic chờ API/điều hướng nằm ở tầng pages (CategoryNavigation).
  */
@@ -151,20 +148,21 @@ test.describe("Điều hướng khóa học theo danh mục", () => {
     page,
     categoryNavigationPage,
     courseDetailPage,
-  }) => {
+  }, testInfo) => {
     test.slow(); // duyệt cả 6 danh mục, mỗi danh mục mở thử 1 trang chi tiết
     const invalidCards: string[] = [];
 
     for (const { code } of CATEGORY_DATA.categories) {
       await categoryNavigationPage.open(code);
 
-      // gom các card có link thiếu mã khóa học (dạng "/chitiet/" trơ trọi)
-      const hrefs = await categoryNavigationPage.getAllCardHrefs();
-      hrefs.forEach((href, index) => {
-        if (!/\/chitiet\/.{2,}/.test(href)) {
-          invalidCards.push(`${code} - card thứ ${index + 1}: href="${href}"`);
-        }
-      });
+      // quét link mọi card; gặp card link rỗng thì method tự chụp trang 404
+      // đính vào report làm bằng chứng rồi tự quay lại trang danh mục
+      invalidCards.push(
+        ...(await categoryNavigationPage.scanInvalidCourseLinks(
+          testInfo,
+          code,
+        )),
+      );
 
       // card hợp lệ vẫn phải điều hướng đúng tới trang chi tiết thật
       await categoryNavigationPage.openFirstRealCourse();

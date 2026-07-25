@@ -5,13 +5,6 @@ import { TimeOutConstants } from "../constants/TimeOutConstants";
 
 /**
  * CategoryNavigation: trang "Khóa học theo danh mục" (/danhmuckhoahoc/<mã>).
- * Kế thừa lưới card từ CourseListingPage; bổ sung chip tên lĩnh vực và
- * các thành phần riêng của card danh mục (badge Yêu thích, mô tả, thời lượng,
- * giảng viên).
- *
- * LƯU Ý: mỗi card ở trang này chứa 2 link chi tiết (chính card + nút
- * "Xem chi tiết" trong overlay) nên đếm số khóa học phải dùng cardCount()
- * (.cardGlobal), KHÔNG dùng courseCount() (đếm link, bị nhân đôi).
  */
 export class CategoryNavigation extends CourseListingPage {
   private readonly banner: Locator;
@@ -45,7 +38,6 @@ export class CategoryNavigation extends CourseListingPage {
 
   /**
    * Điều hướng như user thật: hover menu DANH MỤC rồi click lĩnh vực.
-   * Dùng khi test yêu cầu thao tác qua menu (TC_1 -> TC_4).
    */
   async openViaMenu(
     categoryCode: string,

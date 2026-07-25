@@ -5,9 +5,6 @@ import { TimeOutConstants } from "../constants/TimeOutConstants";
 
 /**
  * CourseCatalogPage: trang "Danh sách khóa học" (/khoahoc).
- * Kế thừa lưới card từ CourseListingPage; bổ sung banner, khu thống kê,
- * thanh phân trang (ul.paginationPages) và vòng tròn loading (#preloader).
- * Dữ liệu đổ qua API phân trang LayDanhSachKhoaHoc_PhanTrang (12 card/trang).
  */
 export class CourseCatalogPage extends CourseListingPage {
   private readonly pagination: Locator;
@@ -44,8 +41,7 @@ export class CourseCatalogPage extends CourseListingPage {
   }
 
   // ===== banner, thống kê, header, loading =====
-  /** Khối banner div.titleCourse: <h3>Khóa học</h3><p>Bắt đầu hành trình nào!!!</p>
-   *  (DOM viết thường, CSS uppercase hóa khi hiển thị). */
+  /** Khối banner div.titleCourse: <h3>Khóa học</h3><p>Bắt đầu hành trình nào!!!</p> */
   getBanner(): Locator {
     return this.banner;
   }

@@ -42,6 +42,12 @@ export class RouteConstants {
    */
   static readonly API_COURSE_BY_CATEGORY =
     "/api/QuanLyKhoaHoc/LayKhoaHocTheoDanhMuc";
+  /**
+   * API thông tin chi tiết 1 khóa học (trang /chitiet/<mã>):
+   * LayThongTinKhoaHoc?maKhoaHoc=<mã> (payload object có tenKhoaHoc, moTa...)
+   */
+  static readonly API_COURSE_DETAIL =
+    "/api/QuanLyKhoaHoc/LayThongTinKhoaHoc";    
 }
 
 /** Mã danh mục (lĩnh vực) hợp lệ trên site, lấy từ menu "DANH MỤC". */

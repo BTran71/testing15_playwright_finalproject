@@ -66,7 +66,6 @@ export class TopBarComponent extends BasePage {
 
   /**
    * Ô tìm kiếm hiện hành theo viewport (desktop: .searchForm / mobile: .searchFormMobile
-   * — cả hai cùng placeholder "Tìm kiếm", getByRole chỉ khớp ô đang hiển thị).
    */
   getSearchInput(): Locator {
     return this.searchInput;
@@ -75,6 +74,14 @@ export class TopBarComponent extends BasePage {
   // ===== getters cho các test kiểm tra hiển thị header =====
   getLogo(): Locator {
     return this.page.locator(".textLogo img");
+  }
+  /**
+   * Logo có load được ảnh thật không. Site dùng src tương đối "./logo.png"
+   * nên khi truy cập TRỰC TIẾP URL sâu (vd /chitiet/<id>) ảnh bị 404 (bug TC_13
+   * sheet Xem chi tiết khóa học) — element vẫn visible nhưng naturalWidth = 0.
+   */
+  async isLogoLoaded(): Promise<boolean> {
+    return this.isImageLoaded(this.getLogo());
   }
   getCategoryLink(): Locator {
     return this.ddlCategory;
@@ -93,6 +100,11 @@ export class TopBarComponent extends BasePage {
   }
   getLoginButton(): Locator {
     return this.lnkLogin;
+  }
+
+  /** Avatar user trên header - chỉ hiển thị khi ĐÃ đăng nhập. */
+  getUserAvatar(): Locator {
+    return this.page.locator(".headerAvatar img.avatar");
   }
 
   /** 6 link lĩnh vực trong dropdown menu DANH MỤC (menu desktop). */

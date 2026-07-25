@@ -1,4 +1,4 @@
-import { expect, Locator, Page, Response } from "@playwright/test";
+import { expect, Locator, Page, Response, TestInfo } from "@playwright/test";
 import { TimeOutConstants } from "../constants/TimeOutConstants";
 
 export class BasePage {
@@ -102,6 +102,21 @@ export class BasePage {
         .toBe(true)
         .catch(() => {});
     }
+  }
+  // Chụp màn hình TRẠNG THÁI HIỆN TẠI và đính vào report làm bằng chứng.
+  async attachScreenshot(testInfo: TestInfo, name: string): Promise<void> {
+    const evidencePath = testInfo.outputPath(`${name}.png`);
+    await this.page.screenshot({ path: evidencePath, fullPage: true });
+    await testInfo.attach(name, {
+      path: evidencePath,
+      contentType: "image/png",
+    });
+  }
+  /** Ảnh đã load thành công chưa (naturalWidth > 0). Bắt được ảnh vỡ/404. */
+  async isImageLoaded(image: Locator): Promise<boolean> {
+    return image.evaluate(
+      (el) => el instanceof HTMLImageElement && el.naturalWidth > 0,
+    );
   }
 
   async scrollToBottom(): Promise<void> {
