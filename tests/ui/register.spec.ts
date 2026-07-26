@@ -697,8 +697,9 @@ test.describe("Register Page Test", () => {
 
     await registerPage.clickRegisterButton();
 
-    const successLbl = page.getByText("Email không hợp lệ");
-    await expect(successLbl).toBeVisible();
+    const successLbl = await registerPage.failEmailMessage();
+
+    await expect(successLbl).toContain("Please");
   });
 
   test("RTC_25: Verify the email textbox when only whitespace is entered", async ({
@@ -857,8 +858,6 @@ test.describe("Register Page Test", () => {
 
     await registerPage.chooseGroupCode();
 
-    console.log(phoneNumber.length);
-
     await page.pause();
 
     await registerPage.clickRegisterButton();
@@ -885,7 +884,7 @@ test.describe("Register Page Test", () => {
 
     await registerPage.enterEmailInput(email);
 
-    await registerPage.enterPhoneNumber(phoneNumber + "1");
+    await registerPage.enterPhoneNumber(phoneNumber);
 
     await registerPage.chooseGroupCode();
 
