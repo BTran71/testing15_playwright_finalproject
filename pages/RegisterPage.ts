@@ -75,6 +75,13 @@ export class RegisterPage extends CommonPage {
     const texts = await this.ddlGroupCode.locator("option").allTextContents();
   }
 
+  async failEmailMessage() {
+    const message = await this.emailInput.evaluate(
+      (el: HTMLInputElement) => el.validationMessage,
+    );
+    return message;
+  }
+
   async register(
     account: string,
     password: string,
