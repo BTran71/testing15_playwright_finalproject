@@ -350,11 +350,17 @@ test.describe("Danh sách khóa học", () => {
     context,
     courseCatalogPage,
   }) => {
-    await context.setOffline(true);
-    await courseCatalogPage.getPageButton(2).click();
-    await expect(
-      page.getByText(COURSE_LIST_DATA.offlineMessage).first(),
-    ).toBeVisible({ timeout: 4000 });
+    try {
+      await context.setOffline(true);
+      await courseCatalogPage.getPageButton(2).click();
+      await expect(
+        page.getByText(COURSE_LIST_DATA.offlineMessage).first(),
+      ).toBeVisible({ timeout: 4000 });
+    } finally {
+      // Trả lại mạng dù test pass hay fail, tránh làm hỏng các test chạy sau
+      // khi trình duyệt được dùng lại (chế độ Show browser của VS Code).
+      await context.setOffline(false);
+    }
   });
 
   test("TC_LIST_29: Danh sách hoạt động đúng khi chưa đăng nhập", async ({
