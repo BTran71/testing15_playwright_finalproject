@@ -32,23 +32,28 @@ export class RegisterPage extends CommonPage {
   }
 
   async enterAccountInput(account: string) {
-    await this.accountInput.fill(account);
+    // await this.accountInput.fill(account);
+    await this.inputText(this.accountInput, account);
   }
 
   async enterPasswordInput(password: string) {
-    await this.passwordInput.fill(password);
+    // await this.passwordInput.fill(password);
+    await this.inputText(this.passwordInput, password);
   }
 
   async enterPhoneNumber(phone: string) {
-    await this.phonenumberInput.fill(phone);
+    // await this.phonenumberInput.fill(phone);
+    await this.inputText(this.phonenumberInput, phone);
   }
 
   async enterEmailInput(email: string) {
-    await this.emailInput.fill(email);
+    // await this.emailInput.fill(email);
+    await this.inputText(this.emailInput, email);
   }
 
   async enterFullnameInput(fullname: string) {
-    await this.fullnameInput.fill(fullname);
+    // await this.fullnameInput.fill(fullname);
+    await this.inputText(this.fullnameInput, fullname);
   }
 
   async chooseGroupCode() {
@@ -63,11 +68,13 @@ export class RegisterPage extends CommonPage {
   }
 
   async clickRegisterButton() {
-    await this.registerButton.click();
+    // await this.registerButton.click();
+    await this.click(this.registerButton);
   }
 
   async clickReturnLoginButton() {
-    await this.translateToLoginButoon.click();
+    // await this.translateToLoginButoon.click();
+    await this.click(this.translateToLoginButoon);
   }
 
   async selectGroupCodeDropDown(value: string) {

@@ -27,22 +27,27 @@ export class LoginPage extends CommonPage {
   }
 
   async enterAccounttInput(account: string) {
-    await this.accountInput.fill(account);
+    // await this.accountInput.fill(account);
+    await this.inputText(this.accountInput, account);
   }
   async enterPasswordInput(password: string) {
-    await this.passwordInput.fill(password);
+    // await this.passwordInput.fill(password);
+    await this.inputText(this.passwordInput, password);
   }
 
   async clickLoginButton() {
-    await this.loginButton.click();
+    // await this.loginButton.click();
+    await this.click(this.loginButton);
   }
 
   async clickForgetPasswordLink() {
-    await this.lnkForgetPassword.click();
+    // await this.lnkForgetPassword.click();
+    await this.click(this.lnkForgetPassword);
   }
 
   async clickTranslateRegisterButton() {
-    await this.translateToRegisterButton.click();
+    // await this.translateToRegisterButton.click();
+    await this.click(this.translateToRegisterButton);
   }
 
   async login(account: string, password: string) {
